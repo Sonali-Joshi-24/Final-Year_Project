@@ -6,7 +6,7 @@ url = "https://ukpolicedata.p.rapidapi.com/crimes-street/all-crime"
 
 
 headers = {
-    'x-rapidapi-key': "6220239fd6msh64cd8258f025bacp1d5d3djsn5dd21e702f98",
+    'x-rapidapi-key': "API",
     'x-rapidapi-host': "ukpolicedata.p.rapidapi.com"
     }
 
