@@ -28,6 +28,8 @@ def view_all_notes():
     return data
 
 
+# st.set_page_config(layout="wide")
+
 
 
 # Layout Template
@@ -42,7 +44,6 @@ title_temp = """
 
 </div>
 """
-
 
 st.title("Crime Prediction System")
 
@@ -75,51 +76,93 @@ def crime_analysis():
     st.write(x)
 
 
-    # st.subheader('')
-    fig = px.histogram(x, x='month', color='dayparting', width=800, height=600, title="Crime Frequency by Month...")
+
+    st.header(f"Generating Analysis")
+    st.subheader("Crime Frequency by Month")
+    st.write("The below analysis display the crime frequency with respect to dayparting over a month!")
+
+    fig = px.histogram(x, x='month', color='dayparting', width=800, height=600)
+    fig.update_layout(xaxis = dict(showline = True, showgrid = False), yaxis = dict(showgrid =False, showline = True))
     st.plotly_chart(fig)
 
     # plot charts
-    fig = px.pie(x, names='susp_race', title='Criminal analysis on race', hole=.3, width=800, height=600)
+    st.subheader("Criminal analysis based on race")
+    st.write("The below plot display the crime rate with respect to the race of suspect performing crime!")
+    fig = px.pie(x, names='susp_race',hole=.3, width=800, height=600)
     st.plotly_chart(fig)
 
     # plot charts
-    fig = px.pie(x, names='weekday', title='Crime Count on each day', hole=.3, width= 600 , height=600)
+    st.subheader('Crime Count on each day')
+    st.write('The below plot display the percentage of crime occuring each day!')
+    fig = px.pie(x, names='weekday', hole=.3, width= 600 , height=600)
     st.plotly_chart(fig)
-
-    # to check the offence active
-    # st.subheader('Analyze The Number Of Crime In Total')
-    # select_crime = data['ofns_desc'].drop_duplicates()
-    # y = list(select_crime)
-    # make_decs = st.selectbox('CRIME TYPE: ', y)
-    # # st.write(data[data['ofns_desc'] == make_decs])
-    # # st.write(f"The dataset registers {data.shape[0]} entries for {make_decs} in total")
-    # filter_data =  data[data.ofns_desc.str.contains(make_decs)]
-    # st.subheader(f"The dataset registers {filter_data.shape[0]} entries for {make_decs} in total")
-
 
    
     # analys by gender
-    # st.subheader('Crime Analysis By Gender')
-    fig = px.histogram(x, x = 'vic_sex',color = 'vic_sex',width = 800, height = 600, title ="Crime victims by gender")
+    st.subheader('Victim by Gender')
+    fig = px.histogram(x, x = 'vic_sex',color = 'vic_sex',width = 800, height = 600)
+    fig.update_layout(xaxis = dict(showline = True, showgrid = False), yaxis = dict(showgrid =False, showline = True))
     st.plotly_chart(fig)
 
-    fig = px.histogram(x, x = 'vic_age_group',color = 'vic_age_group',width = 800, height = 600, title ="Crime victims by age group")
+    st.subheader("Crime victims by age group")
+    fig = px.histogram(x, x = 'vic_age_group',color = 'vic_age_group',width = 800, height = 600)
+    fig.update_layout(xaxis = dict(showline = True, showgrid = False), yaxis = dict(showgrid =False, showline = True))
     st.plotly_chart(fig)
 
-    fig = px.box(x, x = 'susp_race', y = 'ofns_desc', color = 'susp_race', width = 1200, height = 900, title= "Crime done on basis of race")
+    st.subheader("Crime done on basis of race of Suspect")
+    fig = px.box(x, x = 'susp_race', y = 'ofns_desc', color = 'susp_race', width = 1200, height = 900)
+    fig.update_layout(xaxis = dict(showline = True, showgrid = False), yaxis = dict(showgrid =False, showline = True))
     # fig.update_traces(quartilemethod ="exclusive")
     st.plotly_chart(fig)
 
-    fig = px.pie(x, names='law_cat_cd', title='Determining level of offense',width= 600 , height=600, hole=.3, color_discrete_sequence=px.colors.sequential.RdBu,)
+    st.subheader("Determining level of offense")
+    fig = px.pie(x, names='law_cat_cd',width= 600 , height=600, hole=.3, color_discrete_sequence=px.colors.sequential.RdBu,)
     st.plotly_chart(fig)
 
+# newly added from here
+    # st.write("Now lets have a look on crime using time series analysis")
+    
 
-    # map for analysis
+    
+    # Number_crimes_days = x['weekday'].value_counts()
+    # days = pd.DataFrame(data=Number_crimes_days.index, columns=["weekday"])
+    # days['values'] = Number_crimes_days.values
+    # fig = px.histogram(x, y="weekday",color="weekday")
+    # fig.update_layout(xaxis = dict(showline = True, showgrid = False), yaxis = dict(showgrid =False, showline = True))
+    # fig.update_layout(title_text='Crime count on each day', xaxis_title_text='Day',yaxis_title_text='Crimes Count', bargap=0.2, bargroupgap=0.1)
+    # st.plotly_chart(fig)
+
+
+   
+    st.subheader("Crime count on each Hour")
+    fig = px.histogram(x, x = 'hour',color = 'hour',width = 800, height = 600)
+    fig.update_layout(bargap=0.2)
+    fig.update_layout(xaxis = dict(showline = True, showgrid = False), yaxis = dict(showgrid =False, showline = True))
+    st.plotly_chart(fig)
+
+    # plot
+    st.subheader("Crime count per Category on each Year")
+    fig = px.histogram(x, x = 'law_cat_cd',color = 'year',width = 800, height = 600)
+    fig.update_layout(xaxis = dict(showline = True, showgrid = False), yaxis = dict(showgrid =False, showline = True))
+    fig.update_layout(bargap=0.2)
+    st.plotly_chart(fig)
+
+     # plot
+    st.subheader("Crimes Count per day")
+    fig = px.histogram(x, x = 'weekday',color = 'hour',width = 800, height = 600)
+    fig.update_layout(bargap=0.2)
+    fig.update_layout(xaxis = dict(showline = True, showgrid = False), yaxis = dict(showgrid =False, showline = True))
+    st.plotly_chart(fig)
+
+# histogram(data,"DAY_OF_WEEK","HOUR",'Crime count per Day on each Hour','Day','Crimes Count on each Hour')
+
+
+
+    #  map for analysis
 
     st.subheader("MAP FOR ANALYSIS")
 
-    m = folium.Map(location=[40.712776 ,-74.005974], zoom_start=16, width= 1000, height = 700)
+    m = folium.Map(location=[40.712776 ,-74.005974], zoom_start=16)
 
 
     def circle_marker(x):
@@ -127,35 +170,177 @@ def crime_analysis():
 
     x[['latitude','longitude','pd_cd','ofns_desc']].apply(lambda x:circle_marker(x), axis = 1)
     folium_static(m)
+    
+    folium.TileLayer('Stamen Terrain').add_to(m)
+    folium.TileLayer('Stamen Toner').add_to(m)
+    folium.TileLayer('Stamen Water Color').add_to(m)
+    folium.TileLayer('cartodbpositron').add_to(m)
+    folium.TileLayer('cartodbdark_matter').add_to(m)
+    folium.LayerControl().add_to(m)
+
+
+    st.subheader("The following map shows crime are index vise i.e pin code vise")
+    st.write("The data maped here is according tp their index i.e pin code, hence it maps the similar crime happning it thoes cluster.")
+
+    newyork_map = folium.Map(location=[40.668583957,-73.9269799319999],zoom_start=11,tiles="CartoDB dark_matter")
+    locations = x.groupby('addr_pct_cd').first()
+    new_locations = locations.loc[:, ['latitude','longitude', 'prem_typ_desc', 'law_cat_cd']]
+    popup_text = """Community Index : {}<br
+                Arrest : {}<br>
+                Location Description : {}<br>"""
+    for i in range(len(new_locations)):
+        lat = new_locations.iloc[i][0]
+        long = new_locations.iloc[i][1]
+        popup_text = """Community Index : {}<br>
+                    Arrest : {}<br>
+                    Location Description : {}<br>"""
+        popup_text = popup_text.format(new_locations.index[i],
+                                new_locations.iloc[i][-1],
+                                new_locations.iloc[i][-2]
+                                )
+        folium.CircleMarker(location = [lat, long], popup= popup_text, fill = True).add_to(newyork_map)
+
+    
+    folium.TileLayer('Stamen Terrain').add_to(newyork_map)
+    folium.TileLayer('Stamen Toner').add_to(newyork_map)
+    folium.TileLayer('Stamen Water Color').add_to(newyork_map)
+    folium.TileLayer('cartodbpositron').add_to(newyork_map)
+    folium.TileLayer('cartodbdark_matter').add_to(newyork_map)
+    folium.LayerControl().add_to(newyork_map)
+    folium_static(newyork_map)
 
 
 
+    st.subheader("The Below result create cluster of area that have more no.of crime!")
+    st.write("The Circle in Red indicates more no.of.crime region")
 
-# def map_analysis():
+    # code for second analysis
+    unique_locations = x['lat_lon'].value_counts()
+    # unique_locations.index
+    CR_index = pd.DataFrame({"Raw_String" : unique_locations.index, "ValueCount":unique_locations})
+    CR_index.index = range(len(unique_locations))
+    # CR_index.head()
+    def Location_extractor(Raw_Str):
+        preProcess = Raw_Str[1:-1].split(',')
+        lat =  preProcess[0][13:-1]
+        long = preProcess[1][15:-1]
+        return (lat, long)
+    CR_index['LocationCoord'] = CR_index['Raw_String'].apply(Location_extractor)
+    CR_index  = CR_index.drop(columns=['Raw_String'], axis = 1)
 
-#     data = pd.read_csv("crime_analysis.csv", low_memory=False)
-#     # st.subheader('Select The City To View Analysis')
-#     # make = data['boro_nm'].drop_duplicates()  # Droping Duplicates Values
-#     # x = list(make)
-#     # makeChoices = st.selectbox('Select Boro Name', x)  # Adding value selected from select box
-#     # st.write(data[data['boro_nm'] == makeChoices])
+    # %%time
+
+    newyork_map_crime = folium.Map(location=[40.668583957,-73.9269799319999],
+                            zoom_start=13,
+                            tiles="CartoDB dark_matter")
+
+    for i in range(500):
+        lat = CR_index['LocationCoord'].iloc[i][0]
+        long = CR_index['LocationCoord'].iloc[i][1]
+        radius = CR_index['ValueCount'].iloc[i] / 45
+        
+        if CR_index['ValueCount'].iloc[i] > 200:
+            color = "#FF4500"
+        else:
+            color = "#008080"
+        
+        popup_text = """Latitude : {}<br>
+                    Longitude : {}<br>
+                    Criminal Incidents : {}<br>"""
+        popup_text = popup_text.format(lat,
+                                long,
+                                CR_index['ValueCount'].iloc[i]
+                                )
+        folium.CircleMarker(location = [lat, long], popup= popup_text,radius = radius, color = color, fill = True).add_to(newyork_map_crime)
+    folium.TileLayer('Stamen Terrain').add_to(newyork_map_crime)
+    folium.TileLayer('Stamen Toner').add_to(newyork_map_crime)
+    folium.TileLayer('Stamen Water Color').add_to(newyork_map_crime)
+    folium.TileLayer('cartodbpositron').add_to(newyork_map_crime)
+    folium.TileLayer('cartodbdark_matter').add_to(newyork_map_crime)
+    folium.LayerControl().add_to(newyork_map_crime)
+    folium_static(newyork_map_crime)
+
     
 
-#     st.subheader("MAP FOR ANALYSIS")
-
-#     m = folium.Map(location=[40.712776 ,-74.005974], zoom_start=16, width= 1000, height = 700)
+        
 
 
-#     def circle_marker(x):
-#         folium.CircleMarker(location=[x[0],x[1]], radius=2, popup="Crime description: {}".format(x[3]),color = 'red', fill = 'True').add_to(m)
-
-#     data[['latitude','longitude','pd_cd','ofns_desc']].apply(lambda x:circle_marker(x), axis = 1)
-#     folium_static(m)
 
 
 
 def crime_prediction():
+    # st.set_page_config(layout="wide")
+
     st.title("Welcome to prediction!")
+    data = pd.read_csv("finalOutput.csv")
+
+
+
+ 
+
+    def filter_data(data):
+        make = data['boro_nm'].drop_duplicates() 
+        y = list(make)
+        makeChoices = st.selectbox('Select City Name to view prediction', y) 
+
+        
+        filtered_data = (data[data['boro_nm'] == makeChoices])
+        return filtered_data
+        
+    x = filter_data(data)
+    st.write(x)
+
+    newyork = [40.712776 ,-74.005974]
+    m = folium.Map(newyork, zoom_start = 13)
+
+    st.subheader("Map For Displaying Prediction Results")
+    st.write("The red spots in map displays the crime description")
+
+    def circle_marker(x):
+        folium.CircleMarker(location =[x[0],x[1]], radius=2,
+                        popup = 'Crime description: {}'.format(x[3]),color = 'red', fill = True).add_to(m)
+    x[['latitude','longitude','law_cat_cd_pred','ofns_desc_pred']].apply(lambda x:circle_marker(x), axis = 1)
+
+    folium.TileLayer('Stamen Terrain').add_to(m)
+    folium.TileLayer('Stamen Toner').add_to(m)
+    folium.TileLayer('Stamen Water Color').add_to(m)
+    folium.TileLayer('cartodbpositron').add_to(m)
+    folium.TileLayer('cartodbdark_matter').add_to(m)
+    folium.LayerControl().add_to(m)
+
+    folium_static(m)
+
+    st.subheader("Map For Displaying one offense type in area")
+    st.write("The blue spots in map displays the clusters formed indicating offense severity")
+    # second map
+    new_york = folium.Map(location=[40.712776 ,-74.005974],
+                        zoom_start=11,)
+    locations = x.groupby('ofns_desc_pred').first()
+    new_locations = locations.loc[:, ['latitude', 'longitude', 'law_cat_cd_pred', 'month']]
+    for i in range(len(new_locations)):
+        lat = new_locations.iloc[i][0]
+        long = new_locations.iloc[i][1]
+        popup_text = """Law Category : {}<br>
+                    Month : {}<br>
+                    Category Prediction : {}<br>"""
+        popup_text = popup_text.format(new_locations.index[i],
+                                new_locations.iloc[i][-1],
+                                new_locations.iloc[i][-2]
+                                )
+        folium.CircleMarker(location = [lat, long], popup= popup_text, fill = True).add_to(new_york)
+    folium.TileLayer('Stamen Terrain').add_to(new_york)
+    folium.TileLayer('Stamen Toner').add_to(new_york)
+    folium.TileLayer('Stamen Water Color').add_to(new_york)
+    folium.TileLayer('cartodbpositron').add_to(new_york)
+    folium.TileLayer('cartodbdark_matter').add_to(new_york)
+    folium.LayerControl().add_to(new_york)
+    folium_static(new_york)
+
+
+    st.markdown(""" ### 1. Here the month are indicated in form of numbers
+    ### 2. The number range from 1 to 12 where 1 indicates January and 12 indicates December """)
+    
+
 
 
 def user_review():  
@@ -198,14 +383,28 @@ def view_review():
 
 
 
+
 def about_us():
-    st.title("Hello")
+  
+    st.title("Members")
+    col1, col2, col3, col4 = st.beta_columns(4)
+    col1.subheader("Team Members:")
+    col2.subheader("Sonali Joshi") 
+    col3.subheader("Robin Lobo")
+    col4.subheader("Joel Fernandes")
+
+    col5,col6 = st.beta_columns(2)
+    col5.subheader("Project Guide:")
+    col6.subheader("Prof. Prajakta Bhagale")
+
+    st.title("Project Abstract")
+    st.write("To implement and design a system that assists in preserving crime statistics of a city by analyzing past records and predicting the crime of that specific city, Depending on the depth of the security aspects.")
 
 
 def main():
     st.sidebar.image("logo.jpg")
     st.sidebar.title("Crime Prediction System")
-    nav = ['About Us', 'Crime Analysis', 'Prediction','User Review','View Reviews']
+    nav = ['About Us', 'Crime Analysis', 'Prediction','User Review','View Reviews',]
     choice =  st.sidebar.selectbox('Navigation', nav)
       
     if choice == 'Crime Analysis':
