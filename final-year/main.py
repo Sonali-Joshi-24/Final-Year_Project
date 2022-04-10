@@ -10,6 +10,7 @@ import plotly.express as px
 from streamlit_folium import folium_static
 import sqlite3
 
+
 conn = sqlite3.connect('data.db')
 c = conn.cursor()
 
@@ -38,7 +39,7 @@ title_temp = """
 <h4 style="color:white; text-align:center;">Title: {}</h4>
 <h4 style="color:white; text-align:center;">Author: {}</h4>
 </br>
-<p style="text-align:justify">{}</p>
+<p style="text-align:justify;color:white">{}</p>
 </br>
 <h6 style="color:white; text-align:justify;">Post Date: {}</h6>
 
@@ -50,7 +51,7 @@ st.title("Crime Prediction System")
 def crime_analysis():
     st.header('NYC crime dataset')
     st.text('A view of this dataset on crime prediction...')
-    data = pd.read_csv("crime_analysis.csv")
+    data = pd.read_csv("final_crime_analysis.csv")
     st.write(data.head(5))
 
     st.subheader('New-York city name distribution on the NYC Crime dataset')
@@ -67,60 +68,58 @@ def crime_analysis():
         make = data['boro_nm'].drop_duplicates() 
         y = list(make)
         makeChoices = st.selectbox('Select Boro Name', y) 
-
-        
-        filtered_data = (data[data['boro_nm'] == makeChoices])
+        # '''
+        # default = 'Staten Island'
+        # filtered_data = data[data['boro_nm'] == default]
+        # '''
+        filtered_data = data[data['boro_nm'] == str(makeChoices)]
         return filtered_data
         
     x = filter_data(data)
     st.write(x)
-
-
-
     st.header(f"Generating Analysis")
-    st.subheader("Crime Frequency by Month")
-    st.write("The below analysis display the crime frequency with respect to dayparting over a month!")
 
-    fig = px.histogram(x, x='month', color='dayparting', width=800, height=600)
+    col_1, col_2 = st.columns(2)
+    col_1.subheader("Crime Frequency by Month")
+    col_1.write("The below analysis display the crime frequency with respect to dayparting over a month!")
+
+    fig = px.histogram(x, x='month', color='dayparting')
     fig.update_layout(xaxis = dict(showline = True, showgrid = False), yaxis = dict(showgrid =False, showline = True))
-    st.plotly_chart(fig)
+    col_1.plotly_chart(fig)
 
     # plot charts
-    st.subheader("Criminal analysis based on race")
-    st.write("The below plot display the crime rate with respect to the race of suspect performing crime!")
-    fig = px.pie(x, names='susp_race',hole=.3, width=800, height=600)
-    st.plotly_chart(fig)
+    col_2.subheader("Criminal analysis based on race")
+    col_2.write("The below plot display the crime rate with respect to the race of suspect performing crime!")
+    fig = px.pie(x, names='susp_race',hole=.3)
+    col_2.plotly_chart(fig)
 
+    col_1, col_2 = st.columns(2)
     # plot charts
-    st.subheader('Crime Count on each day')
-    st.write('The below plot display the percentage of crime occuring each day!')
-    fig = px.pie(x, names='weekday', hole=.3, width= 600 , height=600)
-    st.plotly_chart(fig)
+    col_1.subheader('Crime Count on each day')
+    col_1.write('The below plot display the percentage of crime occuring each day!')
+    fig = px.pie(x, names='weekday', hole=.3)
+    col_1.plotly_chart(fig)
 
    
     # analys by gender
-    st.subheader('Victim by Gender')
-    fig = px.histogram(x, x = 'vic_sex',color = 'vic_sex',width = 800, height = 600)
+    col_2.subheader('Victim by Gender')
+    fig = px.histogram(x, x = 'vic_sex',color = 'vic_sex')
     fig.update_layout(xaxis = dict(showline = True, showgrid = False), yaxis = dict(showgrid =False, showline = True))
-    st.plotly_chart(fig)
+    col_2.plotly_chart(fig)
 
-    st.subheader("Crime victims by age group")
-    fig = px.histogram(x, x = 'vic_age_group',color = 'vic_age_group',width = 800, height = 600)
-    fig.update_layout(xaxis = dict(showline = True, showgrid = False), yaxis = dict(showgrid =False, showline = True))
-    st.plotly_chart(fig)
 
-    st.subheader("Crime done on basis of race of Suspect")
-    fig = px.box(x, x = 'susp_race', y = 'ofns_desc', color = 'susp_race', width = 1200, height = 900)
+    col_1, col_2 = st.columns(2)
+    col_1.subheader("Crime done on basis of race of Suspect")
+    fig = px.box(x, x = 'susp_race', y = 'ofns_desc', color = 'susp_race', width = 1000, height = 800)
     fig.update_layout(xaxis = dict(showline = True, showgrid = False), yaxis = dict(showgrid =False, showline = True))
     # fig.update_traces(quartilemethod ="exclusive")
-    st.plotly_chart(fig)
+    col_1.plotly_chart(fig)
 
-    st.subheader("Determining level of offense")
-    fig = px.pie(x, names='law_cat_cd',width= 600 , height=600, hole=.3, color_discrete_sequence=px.colors.sequential.RdBu,)
-    st.plotly_chart(fig)
+    col_2.subheader("Determining level of offense")
+    fig = px.pie(x, names='law_cat_cd', hole=.3, color_discrete_sequence=px.colors.sequential.RdBu,)
+    col_2.plotly_chart(fig)
 
-# newly added from here
-    # st.write("Now lets have a look on crime using time series analysis")
+
     
 
     
@@ -131,28 +130,33 @@ def crime_analysis():
     # fig.update_layout(xaxis = dict(showline = True, showgrid = False), yaxis = dict(showgrid =False, showline = True))
     # fig.update_layout(title_text='Crime count on each day', xaxis_title_text='Day',yaxis_title_text='Crimes Count', bargap=0.2, bargroupgap=0.1)
     # st.plotly_chart(fig)
-
+    col_1, col_2 = st.columns(2)
+    col_1.subheader("Crime victims by age group")
+    fig = px.histogram(x, x = 'vic_age_group',color = 'vic_age_group')
+    fig.update_layout(xaxis = dict(showline = True, showgrid = False), yaxis = dict(showgrid =False, showline = True))
+    col_1.plotly_chart(fig)
 
    
-    st.subheader("Crime count on each Hour")
-    fig = px.histogram(x, x = 'hour',color = 'hour',width = 800, height = 600)
+    col_2.subheader("Crime count on each Hour")
+    fig = px.histogram(x, x = 'hour',color = 'hour')
     fig.update_layout(bargap=0.2)
     fig.update_layout(xaxis = dict(showline = True, showgrid = False), yaxis = dict(showgrid =False, showline = True))
-    st.plotly_chart(fig)
+    col_2.plotly_chart(fig)
 
     # plot
-    st.subheader("Crime count per Category on each Year")
-    fig = px.histogram(x, x = 'law_cat_cd',color = 'year',width = 800, height = 600)
+    col_1, col_2 = st.columns(2)
+    col_1.subheader("Crime count per Category on each Year")
+    fig = px.histogram(x, x = 'law_cat_cd',color = 'year')
     fig.update_layout(xaxis = dict(showline = True, showgrid = False), yaxis = dict(showgrid =False, showline = True))
     fig.update_layout(bargap=0.2)
-    st.plotly_chart(fig)
+    col_1.plotly_chart(fig)
 
      # plot
-    st.subheader("Crimes Count per day")
-    fig = px.histogram(x, x = 'weekday',color = 'hour',width = 800, height = 600)
+    col_2.subheader("Crimes Count per day")
+    fig = px.histogram(x, x = 'weekday',color = 'hour')
     fig.update_layout(bargap=0.2)
     fig.update_layout(xaxis = dict(showline = True, showgrid = False), yaxis = dict(showgrid =False, showline = True))
-    st.plotly_chart(fig)
+    col_2.plotly_chart(fig)
 
 # histogram(data,"DAY_OF_WEEK","HOUR",'Crime count per Day on each Hour','Day','Crimes Count on each Hour')
 
@@ -161,6 +165,7 @@ def crime_analysis():
     #  map for analysis
 
     st.subheader("MAP FOR ANALYSIS")
+    st.write("Crime Analysis to map the crime.")
 
     m = folium.Map(location=[40.712776 ,-74.005974], zoom_start=16)
 
@@ -179,8 +184,8 @@ def crime_analysis():
     folium.LayerControl().add_to(m)
 
 
-    st.subheader("The following map shows crime are index vise i.e pin code vise")
-    st.write("The data maped here is according tp their index i.e pin code, hence it maps the similar crime happning it thoes cluster.")
+    st.subheader("The following map shows crime index vise i.e pin code vise")
+    st.write("The data maped here is according to their index i.e pin code, hence it maps the similar crime with respect to law_category happning it thoes cluster.")
 
     newyork_map = folium.Map(location=[40.668583957,-73.9269799319999],zoom_start=11,tiles="CartoDB dark_matter")
     locations = x.groupby('addr_pct_cd').first()
@@ -192,7 +197,7 @@ def crime_analysis():
         lat = new_locations.iloc[i][0]
         long = new_locations.iloc[i][1]
         popup_text = """Community Index : {}<br>
-                    Arrest : {}<br>
+                    Arrest Category : {}<br>
                     Location Description : {}<br>"""
         popup_text = popup_text.format(new_locations.index[i],
                                 new_locations.iloc[i][-1],
@@ -210,9 +215,9 @@ def crime_analysis():
     folium_static(newyork_map)
 
 
-
-    st.subheader("The Below result create cluster of area that have more no.of crime!")
-    st.write("The Circle in Red indicates more no.of.crime region")
+    st.subheader("CRIME ANALYSIS TO MAP CLUSTER")
+    st.write("The Below result create cluster of area that have more no.of crime. If the crime in certain region does not cross a threshold value it does not forms cluster")
+    st.write("The red spots indicates more no.of.crime region")
 
     # code for second analysis
     unique_locations = x['lat_lon'].value_counts()
@@ -272,7 +277,7 @@ def crime_prediction():
     # st.set_page_config(layout="wide")
 
     st.title("Welcome to prediction!")
-    data = pd.read_csv("finalOutput.csv")
+    data = pd.read_csv("dataXGBpred.csv")
 
 
 
@@ -310,8 +315,9 @@ def crime_prediction():
 
     folium_static(m)
 
-    st.subheader("Map For Displaying one offense type in area")
-    st.write("The blue spots in map displays the clusters formed indicating offense severity")
+    st.subheader("Map For Displaying crime offense in area")
+    st.write("The blue spots in map displays the clusters formed indicating offense types.")
+    st.write("Here,the offense type can be classified into types of crime i.e ASSULT, ROBBERY etc.")
     # second map
     new_york = folium.Map(location=[40.712776 ,-74.005974],
                         zoom_start=11,)
@@ -320,7 +326,7 @@ def crime_prediction():
     for i in range(len(new_locations)):
         lat = new_locations.iloc[i][0]
         long = new_locations.iloc[i][1]
-        popup_text = """Law Category : {}<br>
+        popup_text = """Offense Type : {}<br>
                     Month : {}<br>
                     Category Prediction : {}<br>"""
         popup_text = popup_text.format(new_locations.index[i],
@@ -337,14 +343,14 @@ def crime_prediction():
     folium_static(new_york)
 
 
-    st.markdown(""" ### 1. Here the month are indicated in form of numbers
-    ### 2. The number range from 1 to 12 where 1 indicates January and 12 indicates December """)
+    st.markdown(""" 1. Here the month are indicated in form of numbers
+    2. The number range from 1 to 12 where 1 indicates January and 12 indicates December """)
     
 
 
 
 def user_review():  
-    add_blog = st.beta_container()
+    add_blog = st.container()
     # view_blog = st.beta_container()
 
     with add_blog:
@@ -387,18 +393,18 @@ def view_review():
 def about_us():
   
     st.title("Members")
-    col1, col2, col3, col4 = st.beta_columns(4)
+    col1, col2, col3, col4 = st.columns(4)
     col1.subheader("Team Members:")
     col2.subheader("Sonali Joshi") 
     col3.subheader("Robin Lobo")
     col4.subheader("Joel Fernandes")
 
-    col5,col6 = st.beta_columns(2)
+    col5,col6 = st.columns(2)
     col5.subheader("Project Guide:")
-    col6.subheader("Prof. Prajakta Bhagale")
+    col6.subheader("Prof. Prajakta Bhangale")
 
     st.title("Project Abstract")
-    st.write("To implement and design a system that assists in preserving crime statistics of a city by analyzing past records and predicting the crime of that specific city, Depending on the depth of the security aspects.")
+    st.write(""" *To implement and design a system that assists in preserving crime statistics of a city by analyzing past records and predicting the crime of that specific city, Depending on the depth of the security aspects.* """)
 
 
 def main():
